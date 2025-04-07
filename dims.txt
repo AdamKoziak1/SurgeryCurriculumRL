@@ -1,32 +1,32 @@
 NeedleReach-v0
- -> obs: 3
- -> act: 5.
+ -> obs: 7
+ -> act: 6.
 NeedlePick-v0
- -> obs: 3
- -> act: 5.
+ -> obs: 19
+ -> act: 6.
  GauzeRetrieve-v0
- -> obs: 3
- -> act: 5.
+ -> obs: 19
+ -> act: 6.
  PegTransfer-v0
- -> obs: 3
- -> act: 5.
+ -> obs: 19
+ -> act: 6.
 
  NeedleRegrasp-v0
- -> obs: 3
- -> act: 10.
+ -> obs: 35**
+ -> act: 10.***
  BiPegTransfer-v0
- -> obs: 3
- -> act: 10.
+ -> obs: 35**
+ -> act: 10.***
 
  ECMReach-v0
- -> obs: 3
- -> act: 3.
+ -> obs: 6
+ -> act: 3.***
  MisOrient-v0
- -> obs: 3
- -> act: 1.
+ -> obs: 9
+ -> act: 1.***
  StaticTrack-v0
- -> obs: 3
- -> act: 3.
+ -> obs: 10
+ -> act: 3.***
  ActiveTrack-v0
  -> obs: 10
- -> act: 3.
+ -> act: 3.***

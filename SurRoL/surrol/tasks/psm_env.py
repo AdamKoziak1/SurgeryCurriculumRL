@@ -51,6 +51,7 @@ class PsmEnv(SurRoLGoalEnv):
         # has_object
         self.has_object = False
         self._waypoint_goal = False
+        self.override_obj = False
         self.obj_id, self.obj_link1, self.obj_link2 = None, None, None  # obj_link: waypoint link
 
         # gripper
@@ -149,7 +150,7 @@ class PsmEnv(SurRoLGoalEnv):
             # TODO: can have a same-length state representation
             object_pos = waypoint_pos = waypoint_rot = object_rel_pos = np.zeros(0)
 
-        if self.has_object:
+        if self.has_object and not self.override_obj:
             # object/waypoint position
             achieved_goal = object_pos.copy() if not self._waypoint_goal else waypoint_pos.copy()
         else:
@@ -225,6 +226,7 @@ class PsmEnv(SurRoLGoalEnv):
         else:
             self.psm1.move_jaw(np.deg2rad(40))
             self._release(0)
+        
         # time3 = time.time()
         # print("transform time: {:.4f}, IK time: {:.4f}, jaw time: {:.4f}, total time: {:.4f}"
         #       .format(time1 - time0, time2 - time1, time3 - time2, time3 - time0))
@@ -434,7 +436,7 @@ class PsmsEnv(PsmEnv):
             object_pos = waypoint_pos1 = waypoint_rot1 = waypoint_pos2 = waypoint_rot2 = \
                 object_rel_pos1 = object_rel_pos2 = np.zeros(0)
 
-        if self.has_object:
+        if self.has_object and not self.override_obj:
             achieved_goal = object_pos.copy() if not self._waypoint_goal else waypoint_pos1.copy()
         else:
             # tip position

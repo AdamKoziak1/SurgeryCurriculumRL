@@ -21,7 +21,8 @@ class NeedleReach(PsmEnv):
 
     def _env_setup(self):
         super(NeedleReach, self)._env_setup()
-        self.has_object = False
+        self.has_object = True
+        self.override_obj = True
 
         # robot
         workspace_limits = self.workspace_limits1
@@ -54,9 +55,9 @@ class NeedleReach(PsmEnv):
         self.obj_ids['rigid'].append(obj_id)  # 0
         self.obj_id, self.obj_link1 = self.obj_ids['rigid'][0], 1
 
-    # def _set_action(self, action: np.ndarray):
-    #     action[3] = 0  # no yaw change
-    #     super(NeedleReach, self)._set_action(action)
+    def _set_action(self, action: np.ndarray):
+        action[3] = 0  # no yaw change
+        super(NeedleReach, self)._set_action(action)
 
     def _sample_goal(self) -> np.ndarray:
         """ Samples a new goal and returns it.

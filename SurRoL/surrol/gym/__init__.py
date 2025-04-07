@@ -26,33 +26,6 @@ register(
     max_episode_steps=50,
 )
 
-# PSM Env (unified)
-register(
-    id='UnifiedPsmEnv-v0',
-    entry_point='surrol.tasks.psm_env_unified:UnifiedPsmEnv',
-    max_episode_steps=50,
-)
-
-# register(
-#     id='GauzeRetrieve-U',
-#     entry_point='surrol.tasks.psm_env_unified:UnifiedPsmEnv',
-#     max_episode_steps=50,
-#     task_type="GauzeRetrieve"
-# )
-
-# register(
-#     id='NeedlePick-U',
-#     entry_point='surrol.tasks.psm_env_unified:UnifiedPsmEnv',
-#     max_episode_steps=50,
-#     task_type="NeedlePick"
-# )
-
-# register(
-#     id='PegTransfer-v0',
-#     entry_point='surrol.tasks.peg_transfer:PegTransfer',
-#     max_episode_steps=50,
-# )
-
 # Bimanual PSM Env
 register(
     id='NeedleRegrasp-v0',

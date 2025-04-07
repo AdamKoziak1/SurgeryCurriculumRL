@@ -57,9 +57,9 @@ class GauzeRetrieve(PsmEnv):
         self.obj_ids['rigid'].append(obj_id)  # 0
         self.obj_id, self.obj_link1 = self.obj_ids['rigid'][0], -1
 
-    # def _set_action(self, action: np.ndarray):
-    #     action[3] = 0  # no yaw change
-    #     super(GauzeRetrieve, self)._set_action(action)
+    def _set_action(self, action: np.ndarray):
+        action[3] = 0  # no yaw change
+        super(GauzeRetrieve, self)._set_action(action)
 
     def _sample_goal(self) -> np.ndarray:
         """ Samples a new goal and returns it.

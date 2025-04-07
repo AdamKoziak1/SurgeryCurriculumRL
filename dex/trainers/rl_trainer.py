@@ -52,7 +52,11 @@ class RLTrainer(BaseTrainer):
     def _setup_logger(self):
         update_mpi_config(self.cfg)
         if self.is_chef:
-            exp_name = f"{self.cfg.task}_{self.cfg.agent.name}_demo{self.cfg.num_demo}_seed{self.cfg.seed}"
+            if self.cfg.load_ckpt:
+                exp_name = f"{self.cfg.task} init {self.cfg.init_task}"
+                print(exp_name)
+            else:
+                exp_name = f"{self.cfg.task}_{self.cfg.agent.name}_demo{self.cfg.num_demo}_seed{self.cfg.seed}"
             if self.cfg.postfix is not None:
                 exp_name =  exp_name + '_' + str(self.cfg.postfix) 
             if self.cfg.use_wb:
@@ -82,28 +86,11 @@ class RLTrainer(BaseTrainer):
         # NEW: Load checkpoint if requested
         # ----------------------------------
         if self.cfg.load_ckpt:
-            # For example, build the path to the checkpoint directory
-            # The CheckpointHandler by default might expect something like:
-            #    path = <ckpt_init_dir>, episode = <ckpt_init_episode>
-            # Then it loads "ckpt_<episode>.pth" or "model_<episode>.pth"
-            # loaded_dict = CheckpointHandler.load_checkpoint(
-            #     ckpt_dir=self.cfg.ckpt_init_dir,
-            #     agent=self.agent,
-            #     device=self.device,
-            #     episode=self.cfg.ckpt_init_episode
-            # )
-            CheckpointHandler.load_checkpoint(
-                self.cfg.ckpt_dir, self.agent, self.device, self.cfg.ckpt_episode
-            )
-            # The returned dict typically includes things like
-            #   'episode', 'global_step', 'score', 'o_norm', 'g_norm', ...
-            # so you can restore them:
-            # self._global_episode = loaded_dict['episode']
-            # self._global_step = loaded_dict['global_step']
 
-            # # If you store normalizers in the checkpoint, restore them:
-            # self.agent.o_norm = loaded_dict['o_norm']
-            # self.agent.g_norm = loaded_dict['g_norm']
+            print(self.cfg.ckpt_init_dir)
+            CheckpointHandler.load_checkpoint(
+                self.cfg.ckpt_init_dir, self.agent, self.device, self.cfg.ckpt_init_episode
+            )
 
             if self.is_chef:
                 self.termlog.info(
