@@ -52,7 +52,11 @@ class RLTrainer(BaseTrainer):
     def _setup_logger(self):
         update_mpi_config(self.cfg)
         if self.is_chef:
-            exp_name = f"{self.cfg.task}_{self.cfg.agent.name}_demo{self.cfg.num_demo}_seed{self.cfg.seed}"
+            if self.cfg.load_ckpt:
+                exp_name = f"{self.cfg.task} init {self.cfg.init_task}"
+                print(exp_name)
+            else:
+                exp_name = f"{self.cfg.task}_{self.cfg.agent.name}_demo{self.cfg.num_demo}_seed{self.cfg.seed}"
             if self.cfg.postfix is not None:
                 exp_name =  exp_name + '_' + str(self.cfg.postfix) 
             if self.cfg.use_wb:
@@ -78,6 +82,21 @@ class RLTrainer(BaseTrainer):
         self._global_step = 0
         self._global_episode = 0
         set_seed_everywhere(self.cfg.seed)
+        # ----------------------------------
+        # NEW: Load checkpoint if requested
+        # ----------------------------------
+        if self.cfg.load_ckpt:
+
+            print(self.cfg.ckpt_init_dir)
+            CheckpointHandler.load_checkpoint(
+                self.cfg.ckpt_init_dir, self.agent, self.device, self.cfg.ckpt_init_episode
+            )
+
+            if self.is_chef:
+                self.termlog.info(
+                    f"Loaded checkpoint from {self.cfg.ckpt_init_dir} at "
+                    f"episode={self._global_episode}, global_step={self._global_step}"
+                )
     
     def train(self):
         n_train_episodes = int(self.cfg.n_train_steps / self.env_params['max_timesteps'])

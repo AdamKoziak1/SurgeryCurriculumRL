@@ -1,5 +1,5 @@
-python SurRoL/surrol/data/env_info.py --env NeedleReach-v0
-python SurRoL/surrol/data/env_info.py --env NeedlePick-v0
+python SurRoL/surrol/data/env_info.py --env NeedleReach-v0 
+python SurRoL/surrol/data/env_info.py --env NeedlePick-v0 
 python SurRoL/surrol/data/env_info.py --env GauzeRetrieve-v0 
 python SurRoL/surrol/data/env_info.py --env PegTransfer-v0 
 python SurRoL/surrol/data/env_info.py --env NeedleRegrasp-v0 

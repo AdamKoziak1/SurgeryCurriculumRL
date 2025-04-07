@@ -8,7 +8,7 @@ n_eval_episodes: 50
 ckpt_dir: ./exp_local/${task}/${agent.name}/d${num_demo}/s${seed}/model
 ckpt_episode: latest
 use_wb: True
-project_name: dex
+project_name: dex2
 entity_name: adam-koziak
 
 # MPI

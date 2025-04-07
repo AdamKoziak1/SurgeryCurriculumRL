@@ -1,5 +1,5 @@
 defaults:
-  - agent: dex
+  - agent: sac
   - _self_
 
 # File path
@@ -17,14 +17,20 @@ replay_buffer_capacity: 100_000
 batch_size: 128
 device: cuda:0
 seed: 1
+out_seed: 1
 task: NeedleRegrasp-v0
+init_task: null
 postfix: null
 dont_save: False
 n_eval_episodes: 20
 
 use_wb: True
-project_name: dex
+project_name: dex2
 entity_name: adam-koziak
+
+load_ckpt: False
+ckpt_init_dir: ./path/to/ckpt
+ckpt_init_episode: latest
 
 # MPI
 mpi: {rank: null, is_chef: null, num_workers: null}

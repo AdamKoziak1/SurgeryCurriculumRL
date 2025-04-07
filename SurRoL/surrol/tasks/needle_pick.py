@@ -112,8 +112,8 @@ class NeedlePick(PsmEnv):
         Define a human expert strategy
         """
         # four waypoints executed in sequential order
-        action = np.zeros(5)
-        action[4] = -0.5
+        action = np.zeros(6)
+        action[5] = -0.5
         for i, waypoint in enumerate(self._waypoints):
             if waypoint is None:
                 continue
@@ -123,7 +123,7 @@ class NeedlePick(PsmEnv):
                 delta_pos /= np.abs(delta_pos).max()
             scale_factor = 0.4
             delta_pos *= scale_factor
-            action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], delta_yaw, waypoint[4]])
+            action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], delta_yaw, 0., waypoint[4]])
             if np.linalg.norm(delta_pos) * 0.01 / scale_factor < 1e-4 and np.abs(delta_yaw) < 1e-2:
                 self._waypoints[i] = None
             break

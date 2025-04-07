@@ -79,6 +79,13 @@ python3 train.py task=NeedlePick-v0 agent=awac use_wb=True
 python3 train.py task=NeedlePick-v0 agent=sqil use_wb=True
 ```
 
+## Curriculum Learning
+- Train **SAC** on NeedlePick using policy trained on NeedleReach
+```
+python3 train.py task=NeedlePick-v0 agent=sac init_task=NeedleReach-v0 load_ckpt=True ckpt_init_dir=./exp_local/NeedleReach-v0/SAC/d100/s1/model ckpt_init_episode=latest seed=2
+```
+Note: set out_seed to a new value, otherwise it overwrites that seed's directory.
+
 Again, all commands can be run on other surgical tasks by replacing NeedlePick with the respective environment in the commands (for both demo collection and RL training).
 
 ## Evaluation Commands

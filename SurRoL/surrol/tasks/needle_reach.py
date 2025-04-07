@@ -21,7 +21,8 @@ class NeedleReach(PsmEnv):
 
     def _env_setup(self):
         super(NeedleReach, self)._env_setup()
-        self.has_object = False
+        self.has_object = True
+        self.override_obj = True
 
         # robot
         workspace_limits = self.workspace_limits1
@@ -76,7 +77,7 @@ class NeedleReach(PsmEnv):
             delta_pos /= np.abs(delta_pos).max()
         delta_pos *= 0.3
 
-        action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], 0., 0.])
+        action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], 0., 0., 0.])
         return action
 
 
