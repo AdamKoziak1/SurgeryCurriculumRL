@@ -15,7 +15,7 @@ n_seed_steps: ${agent.n_seed_steps}
 
 replay_buffer_capacity: 100_000
 batch_size: 128
-device: cuda:0
+device: cuda:3
 seed: 1
 out_seed: 1
 task: NeedleRegrasp-v0
@@ -31,6 +31,7 @@ entity_name: adam-koziak
 load_ckpt: False
 ckpt_init_dir: ./path/to/ckpt
 ckpt_init_episode: latest
+
 
 # MPI
 mpi: {rank: null, is_chef: null, num_workers: null}

@@ -53,8 +53,7 @@ class RLTrainer(BaseTrainer):
         update_mpi_config(self.cfg)
         if self.is_chef:
             if self.cfg.load_ckpt:
-                exp_name = f"{self.cfg.task} init {self.cfg.init_task}"
-                print(exp_name)
+                exp_name = f"{self.cfg.task} from {self.cfg.init_task}_{self.cfg.agent.name}_seed{self.cfg.seed}"
             else:
                 exp_name = f"{self.cfg.task}_{self.cfg.agent.name}_demo{self.cfg.num_demo}_seed{self.cfg.seed}"
             if self.cfg.postfix is not None:
@@ -79,8 +78,6 @@ class RLTrainer(BaseTrainer):
 
         self.device = torch.device(self.cfg.device)
         self.timer = Timer()
-        self._global_step = 0
-        self._global_episode = 0
         set_seed_everywhere(self.cfg.seed)
         # ----------------------------------
         # NEW: Load checkpoint if requested
@@ -94,10 +91,12 @@ class RLTrainer(BaseTrainer):
 
             if self.is_chef:
                 self.termlog.info(
-                    f"Loaded checkpoint from {self.cfg.ckpt_init_dir} at "
-                    f"episode={self._global_episode}, global_step={self._global_step}"
+                    f"Loaded checkpoint from {self.cfg.ckpt_init_dir} and reset counters"
                 )
     
+        self._global_step = 0
+        self._global_episode = 0
+
     def train(self):
         n_train_episodes = int(self.cfg.n_train_steps / self.env_params['max_timesteps'])
         n_eval_episodes = int(n_train_episodes / self.cfg.n_eval) * self.cfg.mpi.num_workers

@@ -68,9 +68,7 @@ class WandBLogger:
         if exclude is None: exclude = []
         flat_config = flatten_dict(conf)
         filtered_config = {k: v for k, v in flat_config.items() if (k not in exclude and not inspect.isclass(v))}
-        print("ExClUdE:\n\n",exclude,"\n\n")
-        for k, v in flat_config.items():
-            print(k, flat_config[k], "|", filtered_config[k] if k in filtered_config else "")
+
         # clear dir
         # save_dir = path / 'wandb'
         # save_dir.mkdir(exist_ok=True)
@@ -79,8 +77,7 @@ class WandBLogger:
         id=None
         if conf.load_ckpt and conf.init_task:
             resume=False
-            id=exp_name
-            print("ExClUdE:\n\n", resume,filtered_config["task"],"\n\n")
+            #id=exp_name
         logger.info("Init wandb")
         wandb.init(
             resume=resume,
