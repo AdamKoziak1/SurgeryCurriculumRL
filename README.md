@@ -1,11 +1,12 @@
-# SurRol Reinforcement Learning Project
+# SurRoL Reinforcement Learning Project
+Code is an extension of https://github.com/med-air/DEX
 
 # Installation Instructions
 
 1. Clone this repository.
 ```bash
-git clone --recursive https://github.com/med-air/DEX.git
-cd DEX
+git clone https://github.com/AdamKoziak1/SurgeryCurriculumRL
+cd SurgeryCurriculumRL
 ```
 
 2. Create a virtual environment
@@ -22,10 +23,9 @@ pip3 install -r requirements.txt
 pip3 install -e .
 ```
 
-4. Then add one line of code at the top of `gym/gym/envs/__init__.py` to register SurRoL tasks:
+4. Then add one line of code at the top of `~/miniconda3/envs/dex/lib/python3.8/site-packages/gym/envs/__init__.py` to register SurRoL tasks:
 
-```python
-# directory: anaconda3/envs/dex/lib/python3.8/site-packages/
+```
 import surrol.gym
 ```
 
@@ -81,12 +81,6 @@ python3 train.py task=NeedlePick-v0 agent=sqil use_wb=True
 
 Again, all commands can be run on other surgical tasks by replacing NeedlePick with the respective environment in the commands (for both demo collection and RL training).
 
-We also implement synchronous parallelization of RL training, e.g., launch 4 parallel training processes:
-```
-mpirun -np 4 python -m train agent=dex task=NeedlePick-v0 use_wb=True
-```
-It should be noted that parallel training will lead to inconsistent performance, which require hyperparameters tuning.
-
 ## Evaluation Commands
 We also provide a script for evaluate the saved model. The directory of the to-be-evaluated model should be included in the configuration file [```eval.yaml```](dex/configs/eval.yaml), where the checkpoint is specified by `ckpt_episode`. For instance:
 - Eval model trained by **DEX** in NeedlePick-v0:
@@ -112,7 +106,7 @@ Our code is designed for standard goal-conditioned gym-based environments and ca
 # Code Navigation
 
 ```
-dex
+
   |- agents                # implements core algorithms in agent classes
   |- components            # reusable infrastructure for model training
   |    |- checkpointer.py  # handles saving + loading of model checkpoints
@@ -139,5 +133,3 @@ dex
   |- eval.py               # evaluation launcher
 ```
 
-# Contact
-For any questions, please feel free to email taou.cs13@gmail.com.
