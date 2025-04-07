@@ -29,7 +29,6 @@ class ReplayCache:
         self.obs, self.ag, self.g, self.actions, self.dones = [], [], [], [], []
 
     def store_transition(self, obs, action, done):
-        print("rlutils store_trans", len(self.obs), obs['observation'].shape)
         self.obs.append(obs['observation'])
         self.ag.append(obs['achieved_goal'])
         self.g.append(obs['desired_goal'])
@@ -41,10 +40,7 @@ class ReplayCache:
         self.ag.append(obs['achieved_goal'])
 
     def pop(self):
-        print("rlutils pop", len(self.obs), self.T+1)
-        print("rlutils pop", len(self.actions), self.T)
         assert len(self.obs) == self.T + 1 and len(self.actions) == self.T
-        print("success")
         obs = np.expand_dims(np.array(self.obs.copy()),axis=0)
         ag = np.expand_dims(np.array(self.ag.copy()), axis=0)
         #print(self.ag)

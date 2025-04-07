@@ -115,7 +115,7 @@ class PegTransfer(PsmEnv):
         Define a human expert strategy
         """
         # six waypoints executed in sequential order
-        action = np.zeros(5)
+        action = np.zeros(6)
         for i, waypoint in enumerate(self._waypoints):
             if waypoint is None:
                 continue
@@ -125,7 +125,7 @@ class PegTransfer(PsmEnv):
                 delta_pos /= np.abs(delta_pos).max()
             scale_factor = 0.7
             delta_pos *= scale_factor
-            action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], delta_yaw, waypoint[4]])
+            action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], delta_yaw, 0., waypoint[4]])
             if np.linalg.norm(delta_pos) * 0.01 / scale_factor < 2e-3 and np.abs(delta_yaw) < np.deg2rad(2.):
                 self._waypoints[i] = None
             break

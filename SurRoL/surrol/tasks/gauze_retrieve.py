@@ -57,9 +57,9 @@ class GauzeRetrieve(PsmEnv):
         self.obj_ids['rigid'].append(obj_id)  # 0
         self.obj_id, self.obj_link1 = self.obj_ids['rigid'][0], -1
 
-    def _set_action(self, action: np.ndarray):
-        action[3] = 0  # no yaw change
-        super(GauzeRetrieve, self)._set_action(action)
+    # def _set_action(self, action: np.ndarray):
+    #     action[3] = 0  # no yaw change
+    #     super(GauzeRetrieve, self)._set_action(action)
 
     def _sample_goal(self) -> np.ndarray:
         """ Samples a new goal and returns it.
@@ -100,8 +100,8 @@ class GauzeRetrieve(PsmEnv):
         Define a human expert strategy
         """
         # four waypoints executed in sequential order
-        action = np.zeros(5)
-        action[4] = -0.5
+        action = np.zeros(6)
+        action[5] = -0.5
         for i, waypoint in enumerate(self._waypoints):
             if waypoint is None:
                 continue
@@ -110,7 +110,7 @@ class GauzeRetrieve(PsmEnv):
                 delta_pos /= np.abs(delta_pos).max()
             scale_factor = 0.6
             delta_pos *= scale_factor
-            action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], 0., waypoint[4]])
+            action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], 0., 0., waypoint[4]])
             if np.linalg.norm(delta_pos) * 0.01 / scale_factor < 1e-4:
                 self._waypoints[i] = None
             break

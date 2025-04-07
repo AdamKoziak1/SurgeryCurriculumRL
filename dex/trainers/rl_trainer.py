@@ -78,6 +78,38 @@ class RLTrainer(BaseTrainer):
         self._global_step = 0
         self._global_episode = 0
         set_seed_everywhere(self.cfg.seed)
+        # ----------------------------------
+        # NEW: Load checkpoint if requested
+        # ----------------------------------
+        if self.cfg.load_ckpt:
+            # For example, build the path to the checkpoint directory
+            # The CheckpointHandler by default might expect something like:
+            #    path = <ckpt_init_dir>, episode = <ckpt_init_episode>
+            # Then it loads "ckpt_<episode>.pth" or "model_<episode>.pth"
+            # loaded_dict = CheckpointHandler.load_checkpoint(
+            #     ckpt_dir=self.cfg.ckpt_init_dir,
+            #     agent=self.agent,
+            #     device=self.device,
+            #     episode=self.cfg.ckpt_init_episode
+            # )
+            CheckpointHandler.load_checkpoint(
+                self.cfg.ckpt_dir, self.agent, self.device, self.cfg.ckpt_episode
+            )
+            # The returned dict typically includes things like
+            #   'episode', 'global_step', 'score', 'o_norm', 'g_norm', ...
+            # so you can restore them:
+            # self._global_episode = loaded_dict['episode']
+            # self._global_step = loaded_dict['global_step']
+
+            # # If you store normalizers in the checkpoint, restore them:
+            # self.agent.o_norm = loaded_dict['o_norm']
+            # self.agent.g_norm = loaded_dict['g_norm']
+
+            if self.is_chef:
+                self.termlog.info(
+                    f"Loaded checkpoint from {self.cfg.ckpt_init_dir} at "
+                    f"episode={self._global_episode}, global_step={self._global_step}"
+                )
     
     def train(self):
         n_train_episodes = int(self.cfg.n_train_steps / self.env_params['max_timesteps'])

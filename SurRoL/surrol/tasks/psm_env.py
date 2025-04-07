@@ -32,8 +32,7 @@ class PsmEnv(SurRoLGoalEnv):
     ravens
     https://github.com/google-research/ravens/blob/master/ravens/environments/environment.py
     """
-    ACTION_SIZE = 5  # (dx, dy, dz, dyaw/dpitch, open/close)
-    ACTION_MODE = 'yaw'
+    ACTION_SIZE = 6  # (dx, dy, dz, dyaw, dpitch, open/close)
     DISTANCE_THRESHOLD = 0.005
     POSE_PSM1 = ((0.05, 0.24, 0.8524), (0, 0, -(90 + 20) / 180 * np.pi))
     QPOS_PSM1 = (0, 0, 0.10, 0, 0, 0)
@@ -90,25 +89,15 @@ class PsmEnv(SurRoLGoalEnv):
         return self._is_success(achieved_goal, desired_goal).astype(np.float32) - 1.
 
     def _env_setup(self):
-        # for venv
         self.obj_ids = {'fixed': [], 'rigid': [], 'deformable': []}
-
-        # camera
         if self._render_mode == 'human':
             reset_camera(yaw=90.0, pitch=-30.0, dist=0.82 * self.SCALING,
                          target=(-0.05 * self.SCALING, 0, 0.36 * self.SCALING))
-
-        # robot
         self.psm1 = Psm1(self.POSE_PSM1[0], p.getQuaternionFromEuler(self.POSE_PSM1[1]),
                          scaling=self.SCALING)
+        # Store the robot’s base orientation as a reference.
         self.psm1_eul = np.array(p.getEulerFromQuaternion(
-            self.psm1.pose_rcm2world(self.psm1.get_current_position(), 'tuple')[1]))  # in the world frame
-        if self.ACTION_MODE == 'yaw':
-            self.psm1_eul = np.array([np.deg2rad(-90), 0., self.psm1_eul[2]])
-        elif self.ACTION_MODE == 'pitch':
-            self.psm1_eul = np.array([np.deg2rad(0), self.psm1_eul[1], np.deg2rad(-90)])
-        else:
-            raise NotImplementedError
+            self.psm1.pose_rcm2world(self.psm1.get_current_position(), 'tuple')[1]))
         self.psm2 = None
         self._contact_constraint = None
         self._contact_approx = False
@@ -118,10 +107,10 @@ class PsmEnv(SurRoLGoalEnv):
                    p.getQuaternionFromEuler(self.POSE_TABLE[1]),
                    globalScaling=self.SCALING)
 
-        # for goal plotting
+        # For goal visualization.
         obj_id = p.loadURDF(os.path.join(ASSET_DIR_PATH, 'sphere/sphere.urdf'),
                             globalScaling=self.SCALING)
-        self.obj_ids['fixed'].append(obj_id)  # 0
+        self.obj_ids['fixed'].append(obj_id)
 
         pass  # need to implement based on every task
         # self.obj_ids
@@ -193,29 +182,48 @@ class PsmEnv(SurRoLGoalEnv):
                                     workspace_limits[:, 0] - [0.02, 0.02, 0.],
                                     workspace_limits[:, 1] + [0.02, 0.02, 0.08])  # clip to ensure convergence
         rot = get_euler_from_matrix(pose_world[:3, :3])
-        if self.ACTION_MODE == 'yaw':
-            action[3] *= np.deg2rad(30)  # yaw, limit maximum change in rotation
-            rot = (self.psm1_eul[0], self.psm1_eul[1], wrap_angle(rot[2] + action[3]))  # only change yaw
-        elif self.ACTION_MODE == 'pitch':
-            action[3] *= np.deg2rad(15)  # pitch, limit maximum change in rotation
-            pitch = np.clip(wrap_angle(rot[1] + action[3]), np.deg2rad(-90), np.deg2rad(90))
-            rot = (self.psm1_eul[0], pitch, self.psm1_eul[2])  # only change pitch
-        else:
-            raise NotImplementedError
-        pose_world[:3, :3] = get_matrix_from_euler(rot)
-        action_rcm = self.psm1.pose_world2rcm(pose_world)
-        # time1 = time.time()
-        self.psm1.move(action_rcm)
-        # time2 = time.time()
+        
+        # if self.ACTION_MODE == 'yaw':
+        #     action[3] *= np.deg2rad(30)  # yaw, limit maximum change in rotation
+        #     rot = (self.psm1_eul[0], self.psm1_eul[1], wrap_angle(rot[2] + action[3]))  # only change yaw
+        # elif self.ACTION_MODE == 'pitch':
+        #     action[3] *= np.deg2rad(15)  # pitch, limit maximum change in rotation
+        #     pitch = np.clip(wrap_angle(rot[1] + action[3]), np.deg2rad(-90), np.deg2rad(90))
+        #     rot = (self.psm1_eul[0], pitch, self.psm1_eul[2])  # only change pitch
+        # else:
+        #     raise NotImplementedError
+        # pose_world[:3, :3] = get_matrix_from_euler(rot)
+        # action_rcm = self.psm1.pose_world2rcm(pose_world)
+        # # time1 = time.time()
+        # self.psm1.move(action_rcm)
+        # # time2 = time.time()
 
-        # jaw
+        # # jaw
+        # if self.block_gripper:
+        #     action[4] = -1
+        # if action[4] < 0:
+        #     self.psm1.close_jaw()
+        #     self._activate(0)
+        # else:
+        #     self.psm1.move_jaw(np.deg2rad(40))  # open jaw angle; can tune
+        #     self._release(0)
+
+        d_yaw = action[3] * np.deg2rad(30)   # scale factor for yaw (adjust as needed)
+        d_pitch = action[4] * np.deg2rad(15) # scale factor for pitch
+        new_yaw = wrap_angle(rot[2] + d_yaw)
+        new_pitch = np.clip(wrap_angle(rot[1] + d_pitch), np.deg2rad(-90), np.deg2rad(90))
+        new_rot = (rot[0], new_pitch, new_yaw)
+        pose_world[:3, :3] = get_matrix_from_euler(new_rot)
+        action_rcm = self.psm1.pose_world2rcm(pose_world)
+        self.psm1.move(action_rcm)
+        # Process jaw command from action[5]
         if self.block_gripper:
-            action[4] = -1
-        if action[4] < 0:
+            action[5] = -1
+        if action[5] < 0:
             self.psm1.close_jaw()
             self._activate(0)
         else:
-            self.psm1.move_jaw(np.deg2rad(40))  # open jaw angle; can tune
+            self.psm1.move_jaw(np.deg2rad(40))
             self._release(0)
         # time3 = time.time()
         # print("transform time: {:.4f}, IK time: {:.4f}, jaw time: {:.4f}, total time: {:.4f}"

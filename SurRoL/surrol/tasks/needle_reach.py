@@ -54,9 +54,9 @@ class NeedleReach(PsmEnv):
         self.obj_ids['rigid'].append(obj_id)  # 0
         self.obj_id, self.obj_link1 = self.obj_ids['rigid'][0], 1
 
-    def _set_action(self, action: np.ndarray):
-        action[3] = 0  # no yaw change
-        super(NeedleReach, self)._set_action(action)
+    # def _set_action(self, action: np.ndarray):
+    #     action[3] = 0  # no yaw change
+    #     super(NeedleReach, self)._set_action(action)
 
     def _sample_goal(self) -> np.ndarray:
         """ Samples a new goal and returns it.
@@ -76,7 +76,7 @@ class NeedleReach(PsmEnv):
             delta_pos /= np.abs(delta_pos).max()
         delta_pos *= 0.3
 
-        action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], 0., 0.])
+        action = np.array([delta_pos[0], delta_pos[1], delta_pos[2], 0., 0., 0.])
         return action
 
 

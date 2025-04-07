@@ -24,16 +24,13 @@ class Sampler:
         """Samples one episode from the environment."""
         self.init()
         episode, done = [], False
-        print("max len:", self._max_episode_len)
         while (not done) and self._episode_step < self._max_episode_len:
-            print(self._episode_step, self._max_episode_len)
             action = self._env.action_space.sample() if random_act else self.sample_action(self._obs, is_train) 
             if action is None:
                 break
             if render:
                 render_obs = self._env.render('rgb_array')
             obs, reward, done, info = self._env.step(action)
-            print(obs["observation"].shape)
             episode.append(AttrDict(
                 reward=reward,
                 success=info['is_success'],
