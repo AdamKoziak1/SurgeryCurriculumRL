@@ -98,11 +98,14 @@ class RLTrainer(BaseTrainer):
         self._global_episode = 0
 
     def train(self):
-        n_train_episodes = int(self.cfg.n_train_steps / self.env_params['max_timesteps'])
+        n_train_episodes = int(self.cfg.n_train_steps / self.env_params['max_timesteps']) # 2000
         n_eval_episodes = int(n_train_episodes / self.cfg.n_eval) * self.cfg.mpi.num_workers
         n_save_episodes = int(n_train_episodes / self.cfg.n_save) * self.cfg.mpi.num_workers
         n_log_episodes = int(n_train_episodes / self.cfg.n_log) * self.cfg.mpi.num_workers
-
+        print("max steps:", self.env_params['max_timesteps'])
+        print("n_train_episodes", n_train_episodes)
+        print("n_eval_episodes", n_eval_episodes)
+        print("n_save_episodes", n_save_episodes)
         assert n_save_episodes > n_eval_episodes
         if n_save_episodes % n_eval_episodes != 0:
             n_save_episodes = int(n_save_episodes / n_eval_episodes) * n_eval_episodes

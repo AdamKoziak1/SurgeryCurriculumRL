@@ -7,30 +7,31 @@ cwd: ${hydra:runtime.output_dir}
 
 # Training params
 n_train_steps: 100_001
-n_eval: 10
-n_save: 5
+n_eval: 20
+n_save: 10
 n_log: 100
 num_demo: 100
 n_seed_steps: ${agent.n_seed_steps}
 
 replay_buffer_capacity: 100_000
-batch_size: 128
+batch_size: 256
 device: cuda:3
-seed: 1
+seed: 10
 out_seed: 1
-task: NeedleRegrasp-v0
+task: NeedleReach-v0
 init_task: null
 postfix: null
 dont_save: False
 n_eval_episodes: 20
+n_save_episodes: 20
 
 use_wb: True
-project_name: dex2
+project_name: dex3
 entity_name: adam-koziak
 
 load_ckpt: False
 ckpt_init_dir: ./path/to/ckpt
-ckpt_init_episode: latest
+ckpt_init_episode: best
 
 
 # MPI
@@ -45,4 +46,4 @@ hydra:
     subdir: ${seed}
   sweeper:
     params:
-      seed: 1,2,3,4,5
+      seed: 3,4,5,6,7

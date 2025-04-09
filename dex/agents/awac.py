@@ -53,7 +53,7 @@ class AWAC(SAC):
             critic_q=Q1.mean().item(),
             critic_target_q=target_Q.mean().item(),
             critic_loss=critic_loss.item(),
-            bacth_reward=reward.mean().item()
+            batch_reward=reward.mean().item()
         )
         return metrics
 
