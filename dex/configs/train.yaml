@@ -11,7 +11,7 @@ n_eval: 20
 n_save: 10
 n_log: 100
 num_demo: 100
-n_seed_steps: ${agent.n_seed_steps}
+n_seed_steps: ${agent.n_seed_steps} # maybe reduce for policy transfer
 
 replay_buffer_capacity: 100_000
 batch_size: 256

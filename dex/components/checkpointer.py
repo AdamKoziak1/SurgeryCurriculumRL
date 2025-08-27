@@ -37,6 +37,16 @@ class CheckpointHandler:
             max_episode = episodes[get_last_argmax(scores)]
             resume_file = CheckpointHandler.get_ckpt_name(max_episode)
             logger.info(f'Checkpoints with success rate {scores}, the highest success rate {max(scores)}!')
+        else:
+            print(resume, type(resume))
+            episode = int(resume)
+            episodes = CheckpointHandler.get_episode(path)
+            print(episode, episodes)
+            if resume not in episodes:
+                print("invalid episode")
+            resume_file = CheckpointHandler.get_ckpt_name(episode)
+            max_episode = np.max(CheckpointHandler.get_episode(path))
+            
         return os.path.join(path, resume_file), max_episode
 
     @staticmethod
